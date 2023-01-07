@@ -1,0 +1,15 @@
+import torch
+
+def check_batch_validity(graph):
+    """checks the validity of the graph"""
+    with torch.no_grad():
+        assert graph.num_nodes() == graph.batch_num_nodes().sum()
+        assert graph.num_edges() == graph.batch_num_edges().sum()
+        assert graph.batch_num_nodes().size(0) == graph.batch_num_edges().size(0)
+        assert torch.equal(graph.nodes().cpu(), torch.arange(graph.num_nodes()))
+        assert graph.edges()[0].max() < graph.num_nodes()
+        assert graph.edges()[1].max() < graph.num_nodes()
+        edge_cum_sum = torch.nn.functional.pad(torch.cumsum(graph.batch_num_edges(), dim=0), (1, 0), 'constant', 0)
+        node_cum_sum = torch.nn.functional.pad(torch.cumsum(graph.batch_num_nodes(), dim=0), (1, 0), 'constant', 0)
+        for batch_id in range(1, len(edge_cum_sum)):
+             assert graph.edges()[0][edge_cum_sum[batch_id-1]:edge_cum_sum[batch_id]].max() < node_cum_sum[batch_id]

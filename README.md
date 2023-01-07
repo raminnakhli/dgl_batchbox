@@ -1,5 +1,5 @@
 # dgl_batchbox
-This is Pytorch repository for the common operations in DGL in a batch-wised manner. There are several operations that are currently supported as below:
+This is a Pytorch repository for the common operations in DGL in a batch-wised manner. There are several operations that are currently supported as below:
 
 ## Normalization
 1. PairNorm
